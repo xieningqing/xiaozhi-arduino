@@ -1,0 +1,8 @@
+{
+  "sketch": "firmware/xiaozhi/xiaozhi.ino",
+  "board": "esp32:esp32:esp32s3",
+  "configuration": "FlashSize=16M,PSRAM=opi,PartitionScheme=app3M_fat9M_16MB",
+  "prebuild": "powershell -NoProfile -ExecutionPolicy Bypass -File \"%VSCA_WORKSPACE_DIR%\\scripts\\sync-libraries.ps1\"",
+  "postbuild": "powershell -NoProfile -ExecutionPolicy Bypass -File \"%VSCA_WORKSPACE_DIR%\\scripts\\gen-intellisense.ps1\"",
+  "output": ".arduino-build"
+}

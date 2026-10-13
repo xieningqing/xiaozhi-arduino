@@ -1,0 +1,34 @@
+# 构建产物：由 Arduino CLI 生成，不要提交
+.arduino-build/
+build/
+logs/
+
+# 编译中间产物。正常情况下都落在上面的构建目录里，
+# 这里兜底防止误在源码目录编译后留下目标文件。
+*.o
+*.d
+*.a
+*.elf
+*.map
+*.bin
+# 但 sketch 的 data/ 目录可能存放字库、固件等需要随源码提交的资源。
+!firmware/xiaozhi/data/**
+
+# IntelliSense / clangd 编译数据库：由 scripts/gen-intellisense.ps1 生成，
+# 不是你手写的配置（约 400 条编译器 include 路径，无法用通配符等价表达）
+.vscode/intellisense_compile_commands.json
+.vscode/ipch/
+.clangd/
+compile_commands.json
+
+# 编辑器/系统噪声
+.DS_Store
+Thumbs.db
+*~
+*.bak
+*.orig
+*.rej
+*.tmp
+
+# 通用工具缓存
+.cache/

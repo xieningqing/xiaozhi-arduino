@@ -1,0 +1,8 @@
+{
+  "arduino.useArduinoCli": true,
+  "arduino.path": "D:\\soft\\aiduino_ide\\Arduino IDE",
+  "arduino.commandPath": "resources\\app\\lib\\backend\\resources\\arduino-cli.exe",
+  "arduino.logLevel": "verbose",
+  "arduino.clearOutputOnBuild": true,
+  "arduino.disableIntelliSenseAutoGen": true
+}
