@@ -101,16 +101,77 @@ arduino-cli compile `
 - 编译后自动运行 `scripts/gen-intellisense.ps1`，生成 IntelliSense 编译数据库
 - 构建输出到 `.arduino-build/`
 
-## 依赖库
+## 外部依赖
 
-第三方库随仓库一起提交在 `libraries/`，不依赖库管理器在线安装：
+编译前必须准备下面这些库和硬件支持包。版本号是经过验证的组合，
+不要随意升级到未验证的版本。
 
-| 库 | 版本 | 用途 |
-|---|---|---|
-| TFT_eSPI | 2.5.43 | ST7789 屏幕驱动 |
-| ArduinoJson | 7.4.3 | OTA 与控制消息 JSON 解析 |
-| ArduinoWebsockets | 0.5.4 | WebSocket 通道（保留，当前用 MQTT） |
-| esp32_opus | 1.0.3 | Opus 编解码 |
+### 1. ESP32 Arduino 核心
+
+| 项目 | 值 |
+|---|---|
+| 包名 | esp32 by Espressif Systems |
+| 版本 | **3.3.12** |
+| 安装方式 | Arduino IDE → 开发板管理器，搜索 `esp32` |
+
+### 2. 第三方库
+
+需要从 Arduino 库管理器安装的库：
+
+| 库名 | 版本 | 用途 | 库管理器搜索 |
+|---|---|---|---|
+| TFT_eSPI | **2.5.43** | ST7789 屏幕驱动 | `TFT_eSPI`（Bodmer） |
+| ArduinoJson | **7.4.3** | OTA 与控制消息 JSON 解析 | `ArduinoJson`（Benoit Blanchon） |
+| ArduinoWebsockets | **0.5.4** | WebSocket 通道（保留，当前走 MQTT） | `ArduinoWebsockets`（Gil Maimon） |
+
+需要手动安装的库（不在库管理器中，或需要指定版本）：
+
+| 库名 | 版本 | 用途 | 来源 |
+|---|---|---|---|
+| esp32_opus | **1.0.3** | Opus 编解码 | 手动从 GitHub 安装，见下 |
+
+**安装 esp32_opus：**
+
+```
+https://github.com/sh123/esp32_opus_arduino
+```
+
+下载后放到 Arduino 库目录，或使用 `git clone` 到
+`Documents/Arduino/libraries/esp32_opus`，目录名必须是 `esp32_opus`。
+
+### 3. TFT_eSPI 的额外配置
+
+TFT_eSPI 装好后必须配置屏幕型号和引脚，否则屏幕不亮或花屏。
+本项目使用仓库内 [libraries/TFT_eSPI/User_Setup.h](libraries/TFT_eSPI/User_Setup.h)
+中已经写好的配置：
+
+| 配置项 | 值 |
+|---|---|
+| 驱动 | `ST7789_DRIVER` |
+| 分辨率 | 240 x 240 |
+| MOSI / SCLK | 47 / 21 |
+| CS / DC / RST | 41 / 40 / 45 |
+| 背光 | 42 |
+| SPI 频率 | 10 MHz |
+
+如果你用库管理器安装 TFT_eSPI（而不是用仓库内的副本），需要把上面这些
+宏手动写进 `Documents/Arduino/libraries/TFT_eSPI/User_Setup.h`。
+
+### 4. 库的两种使用方式
+
+本项目同时支持两种方式，二选一即可：
+
+**方式 A：使用仓库自带的库（推荐）**
+
+仓库的 `libraries/` 目录里已经包含上述四个库的验证版本。
+`scripts/sync-libraries.ps1` 会把它们通过 Junction 链接到 Arduino 库目录，
+`.vscode/arduino.json` 的 prebuild 钩子会自动执行。这种方式版本完全锁定，
+换机器克隆后即可编译。
+
+**方式 B：自己从库管理器安装**
+
+如果不想用仓库内的副本，可以删除或忽略 `libraries/`，
+按上面第 2 节的表格逐个安装。安装时务必对齐版本号。
 
 ## 工程结构
 
@@ -208,7 +269,8 @@ y 216..238   操作提示
 
 ## 版本控制
 
-- 仓库自带第三方库（`libraries/`），不依赖库管理器联网安装
+- 仓库自带第三方库（`libraries/`），克隆后即可编译；也可以改用库管理器安装，
+  见上面「外部依赖」一节
 - `.gitignore` 排除构建产物（`.arduino-build/`、`build/`、`logs/`）和编译中间文件
 - `.gitattributes` 统一行尾：仓库内 LF，PowerShell 脚本 CRLF
 
